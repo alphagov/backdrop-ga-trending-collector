@@ -1,0 +1,10 @@
+*.pyc
+credentials/
+config/
+.idea
+.coverage
+out/
+/src/
+log/
+build/
+.venv/
