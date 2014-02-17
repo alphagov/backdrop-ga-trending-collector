@@ -98,10 +98,11 @@ def compute(args):
         ga_query['filters'] if 'filters' in ga_query else None
     )
 
-    dates = get_date()
     collapse_key = 'pagePath'
 
-    collapsed_data = sum_data(data, ga_query['metric'], collapse_key, dates, 500)
+    collapsed_data = sum_data(data, ga_query['metric'], collapse_key,\
+                              (start, middle, end), 500)
+
     trended_data = get_trends(collapsed_data)
 
     return trended_data
