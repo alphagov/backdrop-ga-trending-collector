@@ -1,50 +1,82 @@
-
 import unittest
 
 from freezegun import freeze_time
 from datetime import date
 
 from collector.trending \
-    import parse_query, get_date, sum_data, assign_day_to_week
+    import parse_query, get_date, sum_data, assign_day_to_week, get_trends
 
+class test_data_calculations(unittest.TestCase):
 
-class test_sum_metrics(unittest.TestCase):
+    data = [{'metrics': {u'pageviews': u'1000'},
+           'dimensions': {u'pagePath': u'/foo',
+                          u'pageTitle': u'foo',
+                          u'day': u'29',
+                          u'month': u'01',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'200'},
+           'dimensions': {u'pagePath': u'/foo',
+                          u'pageTitle': u'foo',
+                          u'day': u'31',
+                          u'month': u'01',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'500'},
+           'dimensions': {u'pagePath': u'/foo',
+                          u'pageTitle': u'foo',
+                          u'day': u'05',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'520'},
+           'dimensions': {u'pagePath': u'/bar',
+                          u'pageTitle': u'bar',
+                          u'day': u'04',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'1209'},
+           'dimensions': {u'pagePath': u'/bar',
+                          u'pageTitle': u'bar',
+                          u'day': u'11',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'07'},
+           'dimensions': {u'pagePath': u'/baz',
+                          u'pageTitle': u'baz',
+                          u'day': u'04',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'0'},
+           'dimensions': {u'pagePath': u'/baz',
+                          u'pageTitle': u'baz',
+                          u'day': u'04',
+                          u'month': u'02',
+                          u'year': u'2014'}}]
+
     @freeze_time("2014-02-12 01:00:00")
     def test_sum_by_day(self):
+
         dates = get_date()
-        data = [{'metrics': {u'pageviews': u'03'},
-                 'dimensions': {u'pagePath': u'/foo',
-                                u'pageTitle': u'foo',
-                                u'day': u'29',
-                                u'month': u'01',
-                                u'year': u'2014'}},
-                {'metrics': {u'pageviews': u'10'},
-                 'dimensions': {u'pagePath': u'/foo',
-                                u'pageTitle': u'foo',
-                                u'day': u'05',
-                                u'month': u'02',
-                                u'year': u'2014'}},
-                {'metrics': {u'pageviews': u'07'},
-                 'dimensions': {u'pagePath': u'/bar',
-                                u'pageTitle': u'bar',
-                                u'day': u'04',
-                                u'month': u'02',
-                                u'year': u'2014'}},
-                {'metrics': {u'pageviews': u'23'},
-                 'dimensions': {u'pagePath': u'/bar',
-                                u'pageTitle': u'bar',
-                                u'day': u'11',
-                                u'month': u'02',
-                                u'year': u'2014'}}]
 
-        collapsed_data = sum_data(data, 'pageviews', 'pagePath', dates)
+        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates)
 
-        self.assertEqual(len(collapsed_data), 2)
+        self.assertEqual(len(collapsed_data), 3)
         self.assertEqual(collapsed_data['/foo'], {u'pageTitle': u'foo',
-                                                  'week1': 3, 'week2': 10})
+                                                  'week1': 1200, 'week2': 500})
         self.assertEqual(collapsed_data['/bar'], {u'pageTitle': u'bar',
-                                                  'week1': 7, 'week2': 23})
+                                                  'week1': 520, 'week2': 1209})
+        self.assertEqual(collapsed_data['/baz'], {u'pageTitle': u'baz',
+                                                  'week1': 500, 'week2': 500})
 
+    @freeze_time("2014-02-12 01:00:00")
+    def test_get_percentage_trends(self):
+
+        dates = get_date()
+
+        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates)
+        trended_data = get_trends(collapsed_data)
+
+        self.assertEqual(trended_data['/foo']['percent_change'], -58.333333333333336)
+        self.assertEqual(trended_data['/bar']['percent_change'], 132.5)
+        self.assertEqual(trended_data['/baz']['percent_change'], 0)
 
 class test_dates(unittest.TestCase):
 

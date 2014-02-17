@@ -1,10 +1,9 @@
-
 from datetime import date, timedelta
 
 import gapy.client
 
 ga_date_keys = ['day', 'month', 'year']
-
+FLOOR = 500
 
 def parse_query(query):
     if not 'metric' in query or not query['metric']:
@@ -35,6 +34,18 @@ def assign_day_to_week(day, month, year, dates):
     return 2 if (d >= middle) else 1
 
 
+def get_trends(data):
+
+    for key in data:
+        numerator = data[key]['week2'] - data[key]['week1']
+        denominator = data[key]['week1']
+
+        percent_change = ((float(numerator) / float(denominator)) * 100)
+        data[key]['percent_change'] = percent_change
+
+    return data
+
+
 def sum_data(data, metric, collapse_key, dates):
 
     collapsed = {}
@@ -58,6 +69,11 @@ def sum_data(data, metric, collapse_key, dates):
                                              dimensions['year'], dates)
 
         collapsed[k][week] += int(row['metrics'][metric])
+
+    for key in collapsed:
+        for week in ['week1', 'week2']:
+             if collapsed[key][week] < FLOOR:
+                 collapsed[key][week] = FLOOR
 
     return collapsed
 
