@@ -52,11 +52,11 @@ class test_data_calculations(unittest.TestCase):
                           u'year': u'2014'}}]
 
     @freeze_time("2014-02-12 01:00:00")
-    def test_sum_by_day(self):
+    def test_sum_by_day_with_floor(self):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates)
+        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates, 500)
 
         self.assertEqual(len(collapsed_data), 3)
         self.assertEqual(collapsed_data['/foo'], {u'pageTitle': u'foo',
@@ -71,7 +71,7 @@ class test_data_calculations(unittest.TestCase):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates)
+        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates, 500)
         trended_data = get_trends(collapsed_data)
 
         self.assertEqual(trended_data['/foo']['percent_change'], -58.333333333333336)

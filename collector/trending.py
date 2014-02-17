@@ -3,7 +3,6 @@ from datetime import date, timedelta
 import gapy.client
 
 ga_date_keys = ['day', 'month', 'year']
-FLOOR = 500
 
 def parse_query(query):
     if not 'metric' in query or not query['metric']:
@@ -46,7 +45,7 @@ def get_trends(data):
     return data
 
 
-def sum_data(data, metric, collapse_key, dates):
+def sum_data(data, metric, collapse_key, dates, floor):
 
     collapsed = {}
 
@@ -72,8 +71,8 @@ def sum_data(data, metric, collapse_key, dates):
 
     for key in collapsed:
         for week in ['week1', 'week2']:
-             if collapsed[key][week] < FLOOR:
-                 collapsed[key][week] = FLOOR
+             if collapsed[key][week] < floor:
+                 collapsed[key][week] = floor
 
     return collapsed
 
