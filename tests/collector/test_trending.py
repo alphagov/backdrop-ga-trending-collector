@@ -4,7 +4,8 @@ from freezegun import freeze_time
 from datetime import date
 
 from collector.trending \
-    import parse_query, get_date, sum_data, assign_day_to_week, get_trends
+    import parse_query, get_date, sum_data, assign_day_to_week, \
+           get_trends, flatten_data_and_assign_ids
 
 class test_data_calculations(unittest.TestCase):
 
@@ -111,6 +112,22 @@ class test_data_calculations(unittest.TestCase):
         self.assertEqual(trended_data['foo']['percent_change'], -48.30813534917206)
         self.assertEqual(trended_data['bar']['percent_change'], 132.5)
         self.assertEqual(trended_data['baz']['percent_change'], 0)
+
+    @freeze_time("2014-02-12 01:00:00")
+    def test_flatten_data_and_assign_ids(self):
+
+        dates = get_date()
+
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
+        trended_data = get_trends(collapsed_data)
+        flattened_data = flatten_data_and_assign_ids(trended_data, self.collapse_key)
+
+        flattened_keys = [k['_id'] for k in flattened_data]
+
+        self.assertEqual(len(flattened_data), 3)
+        self.assertIn(u'foo', flattened_keys)
+        self.assertIn(u'bar', flattened_keys)
+        self.assertIn(u'baz', flattened_keys)
 
 class test_dates(unittest.TestCase):
 

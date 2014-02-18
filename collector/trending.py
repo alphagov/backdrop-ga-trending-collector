@@ -1,6 +1,7 @@
 from datetime import date, timedelta
-
 import gapy.client
+
+from backdrop.collector.write import Bucket
 
 ga_date_keys = ['day', 'month', 'year']
 
@@ -57,7 +58,7 @@ def sum_data(data, metric, collapse_key, dates, floor):
         if not k in collapsed:
             d = {}
             for dim in dimensions:
-                if (not dim in ga_date_keys) and dim != collapse_key:
+                if (not dim in ga_date_keys):
                     d[dim] = dimensions[dim]
             d['week1'] = 0
             d['week2'] = 0
@@ -76,8 +77,19 @@ def sum_data(data, metric, collapse_key, dates, floor):
 
     return collapsed
 
+def flatten_data_and_assign_ids(data, collapse_key):
+
+  flattened = []
+
+  for key in data:
+    data[key]['_id'] = data[key][collapse_key]
+    flattened.append(data[key])
+
+  return flattened
+
 
 def compute(args):
+
     credentials = args['credentials']
     client = gapy.client.from_secrets_file(
         credentials['CLIENT_SECRETS'],
@@ -86,6 +98,8 @@ def compute(args):
 
     query = args['query']
     ga_query = parse_query(query['query'])
+
+    collapse_key = "pageTitle"
 
     (start, middle, end) = get_date()
 
@@ -98,11 +112,11 @@ def compute(args):
         ga_query['filters'] if 'filters' in ga_query else None
     )
 
-    collapse_key = 'pagePath'
-
     collapsed_data = sum_data(data, ga_query['metric'], collapse_key,\
                               (start, middle, end), 500)
-
     trended_data = get_trends(collapsed_data)
+    flattened_data = flatten_data_and_assign_ids(trended_data, collapse_key)
 
-    return trended_data
+    bucket = Bucket(query['target']['url'], query['target']['token'])
+
+    bucket.post(flattened_data)
