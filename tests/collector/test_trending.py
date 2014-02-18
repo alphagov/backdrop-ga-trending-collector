@@ -8,6 +8,10 @@ from collector.trending \
 
 class test_data_calculations(unittest.TestCase):
 
+    collapse_key = 'pageTitle'
+    metric = 'pageviews'
+    floor = 500
+
     data = [{'metrics': {u'pageviews': u'1000'},
            'dimensions': {u'pagePath': u'/foo',
                           u'pageTitle': u'foo',
@@ -22,6 +26,30 @@ class test_data_calculations(unittest.TestCase):
                           u'year': u'2014'}},
           {'metrics': {u'pageviews': u'500'},
            'dimensions': {u'pagePath': u'/foo',
+                          u'pageTitle': u'foo',
+                          u'day': u'05',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'100'},
+           'dimensions': {u'pagePath': u'/foo/page1',
+                          u'pageTitle': u'foo',
+                          u'day': u'31',
+                          u'month': u'01',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'120'},
+           'dimensions': {u'pagePath': u'/foo/page1',
+                          u'pageTitle': u'foo',
+                          u'day': u'05',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'89'},
+           'dimensions': {u'pagePath': u'/foo/page2',
+                          u'pageTitle': u'foo',
+                          u'day': u'31',
+                          u'month': u'01',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'98'},
+           'dimensions': {u'pagePath': u'/foo/page2',
                           u'pageTitle': u'foo',
                           u'day': u'05',
                           u'month': u'02',
@@ -56,27 +84,33 @@ class test_data_calculations(unittest.TestCase):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates, 500)
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
+
+        from pprint import pprint
+        pprint(collapsed_data)
 
         self.assertEqual(len(collapsed_data), 3)
-        self.assertEqual(collapsed_data['/foo'], {u'pageTitle': u'foo',
-                                                  'week1': 1200, 'week2': 500})
-        self.assertEqual(collapsed_data['/bar'], {u'pageTitle': u'bar',
-                                                  'week1': 520, 'week2': 1209})
-        self.assertEqual(collapsed_data['/baz'], {u'pageTitle': u'baz',
-                                                  'week1': 500, 'week2': 500})
+        self.assertEqual(collapsed_data['foo'], {u'pageTitle': u'foo',
+                                                  'week1': 1389, 'week2': 718,
+                                                  u'pagePath': u'/foo'})
+        self.assertEqual(collapsed_data['bar'], {u'pageTitle': u'bar',
+                                                  'week1': 520, 'week2': 1209,
+                                                  u'pagePath': u'/bar'})
+        self.assertEqual(collapsed_data['baz'], {u'pageTitle': u'baz',
+                                                  'week1': 500, 'week2': 500,
+                                                  u'pagePath': u'/baz'})
 
     @freeze_time("2014-02-12 01:00:00")
     def test_get_percentage_trends(self):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, 'pageviews', 'pagePath', dates, 500)
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
         trended_data = get_trends(collapsed_data)
 
-        self.assertEqual(trended_data['/foo']['percent_change'], -58.333333333333336)
-        self.assertEqual(trended_data['/bar']['percent_change'], 132.5)
-        self.assertEqual(trended_data['/baz']['percent_change'], 0)
+        self.assertEqual(trended_data['foo']['percent_change'], -48.30813534917206)
+        self.assertEqual(trended_data['bar']['percent_change'], 132.5)
+        self.assertEqual(trended_data['baz']['percent_change'], 0)
 
 class test_dates(unittest.TestCase):
 
