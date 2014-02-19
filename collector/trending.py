@@ -68,6 +68,10 @@ def sum_data(data, metric, collapse_key, dates, floor):
                                              dimensions['month'],
                                              dimensions['year'], dates)
 
+        # Use the shortest common path.
+        if dimensions['pagePath'] in collapsed[k]['pagePath']:
+            collapsed[k]['pagePath'] = dimensions['pagePath']
+
         collapsed[k][week] += int(row['metrics'][metric])
 
     for key in collapsed:

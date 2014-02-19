@@ -14,22 +14,10 @@ class test_data_calculations(unittest.TestCase):
     floor = 500
 
     data = [{'metrics': {u'pageviews': u'1000'},
-           'dimensions': {u'pagePath': u'/foo',
+           'dimensions': {u'pagePath': u'/foo/page1',
                           u'pageTitle': u'foo',
                           u'day': u'29',
                           u'month': u'01',
-                          u'year': u'2014'}},
-          {'metrics': {u'pageviews': u'200'},
-           'dimensions': {u'pagePath': u'/foo',
-                          u'pageTitle': u'foo',
-                          u'day': u'31',
-                          u'month': u'01',
-                          u'year': u'2014'}},
-          {'metrics': {u'pageviews': u'500'},
-           'dimensions': {u'pagePath': u'/foo',
-                          u'pageTitle': u'foo',
-                          u'day': u'05',
-                          u'month': u'02',
                           u'year': u'2014'}},
           {'metrics': {u'pageviews': u'100'},
            'dimensions': {u'pagePath': u'/foo/page1',
@@ -39,6 +27,18 @@ class test_data_calculations(unittest.TestCase):
                           u'year': u'2014'}},
           {'metrics': {u'pageviews': u'120'},
            'dimensions': {u'pagePath': u'/foo/page1',
+                          u'pageTitle': u'foo',
+                          u'day': u'05',
+                          u'month': u'02',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'200'},
+           'dimensions': {u'pagePath': u'/foo',
+                          u'pageTitle': u'foo',
+                          u'day': u'31',
+                          u'month': u'01',
+                          u'year': u'2014'}},
+          {'metrics': {u'pageviews': u'500'},
+           'dimensions': {u'pagePath': u'/foo',
                           u'pageTitle': u'foo',
                           u'day': u'05',
                           u'month': u'02',
@@ -86,9 +86,6 @@ class test_data_calculations(unittest.TestCase):
         dates = get_date()
 
         collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
-
-        from pprint import pprint
-        pprint(collapsed_data)
 
         self.assertEqual(len(collapsed_data), 3)
         self.assertEqual(collapsed_data['foo'], {u'pageTitle': u'foo',
