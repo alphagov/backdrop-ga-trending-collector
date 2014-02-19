@@ -5,7 +5,7 @@ from datetime import date
 
 from collector.trending \
     import parse_query, get_date, sum_data, assign_day_to_week, \
-           get_trends, flatten_data_and_assign_ids
+           get_trends, flatten_data_and_assign_ids, encode_id
 
 class test_data_calculations(unittest.TestCase):
 
@@ -80,6 +80,11 @@ class test_data_calculations(unittest.TestCase):
                           u'month': u'02',
                           u'year': u'2014'}}]
 
+    def test_encode_id(self):
+        url = '/performance'
+
+        self.assertEqual('L3BlcmZvcm1hbmNl', encode_id(url))
+
     @freeze_time("2014-02-12 01:00:00")
     def test_sum_by_day_with_floor(self):
 
@@ -117,14 +122,14 @@ class test_data_calculations(unittest.TestCase):
 
         collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
         trended_data = get_trends(collapsed_data)
-        flattened_data = flatten_data_and_assign_ids(trended_data, self.collapse_key)
+        flattened_data = flatten_data_and_assign_ids(trended_data)
 
         flattened_keys = [k['_id'] for k in flattened_data]
 
         self.assertEqual(len(flattened_data), 3)
-        self.assertIn(u'foo', flattened_keys)
-        self.assertIn(u'bar', flattened_keys)
-        self.assertIn(u'baz', flattened_keys)
+        self.assertIn('L2Jheg==', flattened_keys)
+        self.assertIn('L2Zvbw==', flattened_keys)
+        self.assertIn('L2Jhcg==', flattened_keys)
 
 class test_dates(unittest.TestCase):
 

@@ -1,3 +1,5 @@
+import base64
+import json
 from datetime import date, timedelta
 import gapy.client
 
@@ -81,12 +83,16 @@ def sum_data(data, metric, collapse_key, dates, floor):
 
     return collapsed
 
-def flatten_data_and_assign_ids(data, collapse_key):
+def encode_id(id):
+    id_bytes = id.encode('utf-8')
+    return base64.urlsafe_b64encode(id_bytes)
+
+def flatten_data_and_assign_ids(data):
 
   flattened = []
 
   for key in data:
-    data[key]['_id'] = data[key][collapse_key]
+    data[key]['_id'] = encode_id(data[key]['pagePath'])
     flattened.append(data[key])
 
   return flattened
@@ -119,7 +125,7 @@ def compute(args):
     collapsed_data = sum_data(data, ga_query['metric'], collapse_key,\
                               (start, middle, end), 500)
     trended_data = get_trends(collapsed_data)
-    flattened_data = flatten_data_and_assign_ids(trended_data, collapse_key)
+    flattened_data = flatten_data_and_assign_ids(trended_data)
 
     bucket = Bucket(query['target']['url'], query['target']['token'])
 
