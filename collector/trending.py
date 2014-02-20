@@ -7,6 +7,7 @@ from backdrop.collector.write import Bucket
 
 ga_date_keys = ['day', 'month', 'year']
 
+
 def parse_query(query):
     if not 'metric' in query or not query['metric']:
         raise Exception('Metric required')
@@ -78,24 +79,26 @@ def sum_data(data, metric, collapse_key, dates, floor):
 
     for key in collapsed:
         for week in ['week1', 'week2']:
-             if collapsed[key][week] < floor:
-                 collapsed[key][week] = floor
+            if collapsed[key][week] < floor:
+                collapsed[key][week] = floor
 
     return collapsed
+
 
 def encode_id(id):
     id_bytes = id.encode('utf-8')
     return base64.urlsafe_b64encode(id_bytes)
 
+
 def flatten_data_and_assign_ids(data):
 
-  flattened = []
+    flattened = []
 
-  for key in data:
-    data[key]['_id'] = encode_id(data[key]['pagePath'])
-    flattened.append(data[key])
+    for key in data:
+        data[key]['_id'] = encode_id(data[key]['pagePath'])
+        flattened.append(data[key])
 
-  return flattened
+    return flattened
 
 
 def compute(args):
@@ -122,7 +125,7 @@ def compute(args):
         ga_query['filters'] if 'filters' in ga_query else None
     )
 
-    collapsed_data = sum_data(data, ga_query['metric'], collapse_key,\
+    collapsed_data = sum_data(data, ga_query['metric'], collapse_key,
                               (start, middle, end), 500)
     trended_data = get_trends(collapsed_data)
     flattened_data = flatten_data_and_assign_ids(trended_data)
