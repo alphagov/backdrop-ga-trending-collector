@@ -25,59 +25,59 @@ class test_data_calculations(unittest.TestCase):
                             u'month': u'01',
                             u'year': u'2014'}},
             {'metrics': {u'pageviews': u'120'},
-            'dimensions': {u'pagePath': u'/foo/page1',
-                          u'pageTitle': u'foo',
-                          u'day': u'05',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo/page1',
+                            u'pageTitle': u'foo',
+                            u'day': u'05',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'200'},
-            'dimensions': {u'pagePath': u'/foo',
-                          u'pageTitle': u'foo',
-                          u'day': u'31',
-                          u'month': u'01',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo',
+                            u'pageTitle': u'foo',
+                            u'day': u'31',
+                            u'month': u'01',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'500'},
-            'dimensions': {u'pagePath': u'/foo',
-                          u'pageTitle': u'foo',
-                          u'day': u'05',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo',
+                            u'pageTitle': u'foo',
+                            u'day': u'05',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'89'},
-            'dimensions': {u'pagePath': u'/foo/page2',
-                          u'pageTitle': u'foo',
-                          u'day': u'31',
-                          u'month': u'01',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo/page2',
+                            u'pageTitle': u'foo',
+                            u'day': u'31',
+                            u'month': u'01',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'98'},
-            'dimensions': {u'pagePath': u'/foo/page2',
-                          u'pageTitle': u'foo',
-                          u'day': u'05',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo/page2',
+                            u'pageTitle': u'foo',
+                            u'day': u'05',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'520'},
-            'dimensions': {u'pagePath': u'/bar',
-                          u'pageTitle': u'bar',
-                          u'day': u'04',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/bar',
+                            u'pageTitle': u'bar',
+                            u'day': u'04',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'1209'},
-            'dimensions': {u'pagePath': u'/bar',
-                          u'pageTitle': u'bar',
-                          u'day': u'11',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/bar',
+                            u'pageTitle': u'bar',
+                            u'day': u'11',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'07'},
-            'dimensions': {u'pagePath': u'/baz',
-                          u'pageTitle': u'baz',
-                          u'day': u'04',
-                          u'month': u'02',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/baz',
+                            u'pageTitle': u'baz',
+                            u'day': u'04',
+                            u'month': u'02',
+                            u'year': u'2014'}},
             {'metrics': {u'pageviews': u'0'},
-            'dimensions': {u'pagePath': u'/baz',
-                          u'pageTitle': u'baz',
-                          u'day': u'04',
-                          u'month': u'02',
-                          u'year': u'2014'}}]
+             'dimensions': {u'pagePath': u'/baz',
+                            u'pageTitle': u'baz',
+                            u'day': u'04',
+                            u'month': u'02',
+                            u'year': u'2014'}}]
 
     def test_encode_id(self):
         url = '/performance'
@@ -89,7 +89,8 @@ class test_data_calculations(unittest.TestCase):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key,
+                                  dates, self.floor)
 
         self.assertEqual(len(collapsed_data), 3)
         self.assertEqual(collapsed_data['foo'], {u'pageTitle': u'foo',
@@ -107,10 +108,12 @@ class test_data_calculations(unittest.TestCase):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key,
+                                  dates, self.floor)
         trended_data = get_trends(collapsed_data)
 
-        self.assertEqual(trended_data['foo']['percent_change'], -48.30813534917206)
+        self.assertEqual(trended_data['foo']['percent_change'],
+                         -48.30813534917206)
         self.assertEqual(trended_data['bar']['percent_change'], 132.5)
         self.assertEqual(trended_data['baz']['percent_change'], 0)
 
@@ -119,7 +122,8 @@ class test_data_calculations(unittest.TestCase):
 
         dates = get_date()
 
-        collapsed_data = sum_data(self.data, self.metric, self.collapse_key, dates, self.floor)
+        collapsed_data = sum_data(self.data, self.metric, self.collapse_key,
+                                  dates, self.floor)
         trended_data = get_trends(collapsed_data)
         flattened_data = flatten_data_and_assign_ids(trended_data)
 
