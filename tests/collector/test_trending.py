@@ -5,7 +5,8 @@ from datetime import date
 
 from collector.trending \
     import parse_query, get_date, sum_data, assign_day_to_week, \
-           get_trends, flatten_data_and_assign_ids, encode_id
+            get_trends, flatten_data_and_assign_ids, encode_id
+
 
 class test_data_calculations(unittest.TestCase):
 
@@ -14,11 +15,11 @@ class test_data_calculations(unittest.TestCase):
     floor = 500
 
     data = [{'metrics': {u'pageviews': u'1000'},
-           'dimensions': {u'pagePath': u'/foo/page1',
-                          u'pageTitle': u'foo',
-                          u'day': u'29',
-                          u'month': u'01',
-                          u'year': u'2014'}},
+             'dimensions': {u'pagePath': u'/foo/page1',
+                            u'pageTitle': u'foo',
+                            u'day': u'29',
+                            u'month': u'01',
+                            u'year': u'2014'}},
           {'metrics': {u'pageviews': u'100'},
            'dimensions': {u'pagePath': u'/foo/page1',
                           u'pageTitle': u'foo',
@@ -94,14 +95,14 @@ class test_data_calculations(unittest.TestCase):
 
         self.assertEqual(len(collapsed_data), 3)
         self.assertEqual(collapsed_data['foo'], {u'pageTitle': u'foo',
-                                                  'week1': 1389, 'week2': 718,
-                                                  u'pagePath': u'/foo'})
+                                                 'week1': 1389, 'week2': 718,
+                                                 u'pagePath': u'/foo'})
         self.assertEqual(collapsed_data['bar'], {u'pageTitle': u'bar',
-                                                  'week1': 520, 'week2': 1209,
-                                                  u'pagePath': u'/bar'})
+                                                 'week1': 520, 'week2': 1209,
+                                                 u'pagePath': u'/bar'})
         self.assertEqual(collapsed_data['baz'], {u'pageTitle': u'baz',
-                                                  'week1': 500, 'week2': 500,
-                                                  u'pagePath': u'/baz'})
+                                                 'week1': 500, 'week2': 500,
+                                                 u'pagePath': u'/baz'})
 
     @freeze_time("2014-02-12 01:00:00")
     def test_get_percentage_trends(self):
@@ -130,6 +131,7 @@ class test_data_calculations(unittest.TestCase):
         self.assertIn('L2Jheg==', flattened_keys)
         self.assertIn('L2Zvbw==', flattened_keys)
         self.assertIn('L2Jhcg==', flattened_keys)
+
 
 class test_dates(unittest.TestCase):
 
