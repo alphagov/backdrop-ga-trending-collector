@@ -1,6 +1,5 @@
 *.pyc
 credentials/
-config/
 .idea
 .coverage
 out/
