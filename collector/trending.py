@@ -3,7 +3,7 @@ import json
 from datetime import date, timedelta
 import gapy.client
 
-from backdrop.collector.write import Bucket
+from backdrop.collector.write import DataSet
 
 ga_date_keys = ['day', 'month', 'year']
 
@@ -130,6 +130,6 @@ def compute(args):
     trended_data = get_trends(collapsed_data)
     flattened_data = flatten_data_and_assign_ids(trended_data)
 
-    bucket = Bucket(query['target']['url'], query['target']['token'])
+    data_set = DataSet(query['target']['url'], query['target']['token'])
 
-    bucket.post(flattened_data)
+    data_set.post(flattened_data)
